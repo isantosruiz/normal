@@ -87,6 +87,12 @@
         margin-bottom: 0.3rem;
       }
 
+      .math-symbol {
+        font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+        font-size: 1.08em;
+        line-height: 1;
+      }
+
       input {
         width: 100%;
         border: 1px solid var(--line);
@@ -157,11 +163,11 @@
               <legend>Parámetros de la distribución</legend>
               <div class="field-grid">
                 <div>
-                  <label for="mu">Media (μ):</label>
+                  <label for="mu">Media (\(\:\!\mu\:\!\)):</label>
                   <input id="mu" name="mu" type="text" value="{{ form_values.mu }}" />
                 </div>
                 <div>
-                  <label for="sigma">Desviación estándar (σ):</label>
+                  <label for="sigma">Desviación estándar (\(\:\!\sigma\:\!\)):</label>
                   <input id="sigma" name="sigma" type="text" value="{{ form_values.sigma }}" />
                 </div>
               </div>
