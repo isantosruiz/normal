@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Area bajo la curva normal</title>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6fbff;
+        --ink: #0b1f33;
+        --panel: #ffffff;
+        --line: #d8e2ec;
+        --accent: #005f73;
+        --danger: #ae2012;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top right, #dcefff, var(--bg) 58%);
+      }
+
+      main {
+        max-width: 980px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+
+      h1 {
+        margin: 0 0 0.6rem;
+      }
+
+      p.subtitle {
+        margin: 0 0 1.4rem;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 10px 24px rgba(11, 31, 51, 0.07);
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+      }
+
+      .form-groups {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 0.9rem;
+      }
+
+      fieldset {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.75rem 0.85rem 0.85rem;
+        margin: 0;
+      }
+
+      legend {
+        font-weight: 700;
+        padding: 0 0.3rem;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.92rem;
+        margin-bottom: 0.3rem;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.58rem 0.65rem;
+        font-size: 1rem;
+      }
+
+      button {
+        border: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.7rem 0.9rem;
+        cursor: pointer;
+        justify-self: start;
+      }
+
+      .error {
+        margin-top: 1rem;
+        color: var(--danger);
+        font-weight: 600;
+      }
+
+      .results {
+        margin-top: 1rem;
+      }
+
+      .latex-line {
+        overflow-x: auto;
+        margin: 0.4rem 0;
+      }
+
+      .plot {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        margin-top: 0.8rem;
+      }
+
+      code.code-inline {
+        background: #f2f2f2;
+        padding: 0.15em 0.35em;
+        border-radius: 4px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font-size: 0.95em;
+      }
+
+      #copyright { margin-top: 0.95rem; color: var(--muted); font-size: 0.95rem; display: flex; justify-content: center; text-align: center; }
+      #copyright p { margin: 0; }
+
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Área bajo la curva normal</h1>
+      <p class="subtitle">
+        Captura la media, la desviacion estandar y el intervalo.
+      </p>
+      <p class="subtitle">Para limites infinitos usa <code class="code-inline">oo</code> o <code class="code-inline">-oo</code>.</p>
+
+      <section class="card">
+        <form method="post">
+          <div class="form-groups">
+            <fieldset>
+              <legend>Parámetros de la distribución</legend>
+              <div class="field-grid">
+                <div>
+                  <label for="mu">Media (μ):</label>
+                  <input id="mu" name="mu" type="text" value="{{ form_values.mu }}" />
+                </div>
+                <div>
+                  <label for="sigma">Desviación estándar (σ):</label>
+                  <input id="sigma" name="sigma" type="text" value="{{ form_values.sigma }}" />
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Límites del intervalo</legend>
+              <div class="field-grid">
+                <div>
+                  <label for="desde">Desde</label>
+                  <input id="desde" name="desde" type="text" value="{{ form_values.desde }}" />
+                </div>
+                <div>
+                  <label for="hasta">Hasta</label>
+                  <input id="hasta" name="hasta" type="text" value="{{ form_values.hasta }}" />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <button type="submit">Calcular</button>
+        </form>
+
+        {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+        {% endif %}
+
+        {% if result %}
+        <div class="results">
+          <p class="latex-line">\[ {{ result.latex_density | safe }} \]</p>
+          <p class="latex-line">\[ {{ result.latex_probability | safe }} \]</p>
+          <img
+            class="plot"
+            src="data:image/png;base64,{{ result.image_b64 }}"
+            alt="Grafica de distribucion normal con area sombreada"
+          />
+        </div>
+        {% endif %}
+      </section>
+
+      <div id="copyright">
+        <p>&copy; 2026, <a href="https://isantosruiz.github.io/home/" style="text-decoration: none;">Ildeberto de los Santos Ruiz</a></p>
+      </div>
+
+    </main>
+  </body>
+</html>
