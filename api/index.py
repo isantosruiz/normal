@@ -48,7 +48,7 @@ def parse_finite_value(raw_value: str, field_name: str) -> float:
     try:
         value = float(raw_value)
     except ValueError as exc:
-        raise ValueError(f"Ingresa un valor numerico valido para {field_name}.") from exc
+        raise ValueError(f"Ingresa un valor numérico válido para {field_name}.") from exc
 
     if not math.isfinite(value):
         raise ValueError(f"{field_name} debe ser finito.")
@@ -66,7 +66,7 @@ def parse_bound(raw_value: str) -> float:
     try:
         return float(raw_value)
     except ValueError as exc:
-        raise ValueError("Ingresa limites validos. Usa numeros o oo/-oo.") from exc
+        raise ValueError("Ingresa límites válidos. Usa números o oo/-oo.") from exc
 
 
 def format_bound_latex(value: float) -> str:
@@ -138,7 +138,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
         ax.axvline(left, color="#ae2012", linestyle="--", linewidth=1.2)
     if math.isfinite(right):
         ax.axvline(right, color="#ae2012", linestyle="--", linewidth=1.2)
-    ax.set_title("Distribucion normal y area bajo la curva")
+    ax.set_title("Distribución normal y área bajo la curva")
     ax.set_xlabel("z")
     ax.set_ylabel("Densidad")
     ax.grid(alpha=0.22)
@@ -182,12 +182,12 @@ def index():
 
         try:
             mu = parse_finite_value(form_values["mu"], "la media")
-            sigma = parse_finite_value(form_values["sigma"], "la desviacion estandar")
+            sigma = parse_finite_value(form_values["sigma"], "la desviación estándar")
             desde = parse_bound(form_values["desde"])
             hasta = parse_bound(form_values["hasta"])
 
             if sigma <= 0:
-                raise ValueError("La desviacion estandar debe ser mayor que 0.")
+                raise ValueError("La desviación estándar debe ser mayor que 0.")
 
             left, right = sorted((desde, hasta))
             area = normal_cdf(right, mu, sigma) - normal_cdf(left, mu, sigma)
