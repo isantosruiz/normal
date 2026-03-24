@@ -88,12 +88,12 @@ def to_sympy_number(value: float) -> sp.Expr:
 
 
 def build_density_latex(mu: float, sigma: float) -> str:
-    z = sp.Symbol("z", real=True)
+    x = sp.Symbol("x", real=True)
     mu_expr = to_sympy_number(mu)
     sigma_expr = to_sympy_number(sigma)
 
     coefficient = sp.simplify(1 / (sigma_expr * sp.sqrt(2 * sp.pi)))
-    exponent = sp.simplify(-((z - mu_expr) ** 2) / (2 * sigma_expr**2))
+    exponent = sp.simplify(-((x - mu_expr) ** 2) / (2 * sigma_expr**2))
 
     coefficient_latex = sp.latex(coefficient)
     exponent_latex = sp.latex(exponent)
@@ -119,7 +119,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
     y = normal_pdf(x, mu, sigma)
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
-    ax.plot(x, y, color="#005f73", linewidth=2.2, label="g(z)")
+    ax.plot(x, y, color="#005f73", linewidth=2.2, label="g(x)")
 
     if math.isinf(left) and math.isinf(right):
         mask = np.ones_like(x, dtype=bool)
@@ -131,7 +131,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
         mask = (x >= left) & (x <= right)
     left_label = format_bound_plot(left)
     right_label = format_bound_plot(right)
-    area_label = f"P({left_label} < z < {right_label})"
+    area_label = f"P({left_label} < x < {right_label})"
     ax.fill_between(x[mask], 0, y[mask], color="#ee9b00", alpha=0.35, label=area_label)
 
     if math.isfinite(left):
@@ -139,7 +139,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
     if math.isfinite(right):
         ax.axvline(right, color="#ae2012", linestyle="--", linewidth=1.2)
     ax.set_title("Distribución normal y área bajo la curva")
-    ax.set_xlabel("z")
+    ax.set_xlabel("x")
     ax.set_ylabel("Densidad")
     ax.grid(alpha=0.22)
     ax.legend(loc="upper right")
@@ -158,10 +158,10 @@ def build_latex(mu: float, sigma: float, desde: float, hasta: float, area: float
     right_s = format_bound_latex(right)
     density_latex = build_density_latex(mu, sigma)
 
-    latex_density = rf"g(z):={density_latex}"
+    latex_density = rf"g(x):={density_latex}"
     latex_probability = (
-        rf"P\left({left_s} < z < {right_s}\right)="
-        rf"\int_{{{left_s}}}^{{{right_s}}}g(z)\,dz={area:.6f}"
+        rf"P\left({left_s} < x < {right_s}\right)="
+        rf"\int_{{{left_s}}}^{{{right_s}}}g(x)\,dx={area:.6f}"
     )
     return latex_density, latex_probability
 
