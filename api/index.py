@@ -81,19 +81,25 @@ def format_bound_plot(value: float) -> str:
     return format_number(value)
 
 
+def choose_variable_symbol(mu: float, sigma: float) -> str:
+    if abs(mu) < 1e-12 and abs(sigma - 1.0) < 1e-12:
+        return "z"
+    return "x"
+
+
 def to_sympy_number(value: float) -> sp.Expr:
     if abs(value - round(value)) < 1e-12:
         return sp.Integer(int(round(value)))
     return sp.Float(value)
 
 
-def build_density_latex(mu: float, sigma: float) -> str:
-    x = sp.Symbol("x", real=True)
+def build_density_latex(mu: float, sigma: float, variable_symbol: str) -> str:
+    variable = sp.Symbol(variable_symbol, real=True)
     mu_expr = to_sympy_number(mu)
     sigma_expr = to_sympy_number(sigma)
 
     coefficient = sp.simplify(1 / (sigma_expr * sp.sqrt(2 * sp.pi)))
-    exponent = sp.simplify(-((x - mu_expr) ** 2) / (2 * sigma_expr**2))
+    exponent = sp.simplify(-((variable - mu_expr) ** 2) / (2 * sigma_expr**2))
 
     coefficient_latex = sp.latex(coefficient)
     exponent_latex = sp.latex(exponent)
@@ -104,7 +110,7 @@ def build_density_latex(mu: float, sigma: float) -> str:
     return rf"{coefficient_latex}\,\exp\left({exponent_latex}\right)"
 
 
-def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
+def draw_curve(mu: float, sigma: float, desde: float, hasta: float, variable_symbol: str) -> str:
     left, right = sorted((desde, hasta))
     candidates = [mu - 4.0 * sigma, mu + 4.0 * sigma]
     if math.isfinite(left):
@@ -119,7 +125,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
     y = normal_pdf(x, mu, sigma)
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
-    ax.plot(x, y, color="#005f73", linewidth=2.2, label="g(x)")
+    ax.plot(x, y, color="#005f73", linewidth=2.2, label=f"g({variable_symbol})")
 
     if math.isinf(left) and math.isinf(right):
         mask = np.ones_like(x, dtype=bool)
@@ -131,7 +137,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
         mask = (x >= left) & (x <= right)
     left_label = format_bound_plot(left)
     right_label = format_bound_plot(right)
-    area_label = f"P({left_label} < x < {right_label})"
+    area_label = f"P({left_label} < {variable_symbol} < {right_label})"
     ax.fill_between(x[mask], 0, y[mask], color="#ee9b00", alpha=0.35, label=area_label)
 
     if math.isfinite(left):
@@ -139,7 +145,7 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
     if math.isfinite(right):
         ax.axvline(right, color="#ae2012", linestyle="--", linewidth=1.2)
     ax.set_title("Distribución normal y área bajo la curva")
-    ax.set_xlabel("x")
+    ax.set_xlabel(variable_symbol)
     ax.set_ylabel("Densidad")
     ax.grid(alpha=0.22)
     ax.legend(loc="upper right")
@@ -152,16 +158,18 @@ def draw_curve(mu: float, sigma: float, desde: float, hasta: float) -> str:
     return base64.b64encode(buffer.read()).decode("ascii")
 
 
-def build_latex(mu: float, sigma: float, desde: float, hasta: float, area: float) -> tuple[str, str]:
+def build_latex(
+    mu: float, sigma: float, desde: float, hasta: float, area: float, variable_symbol: str
+) -> tuple[str, str]:
     left, right = sorted((desde, hasta))
     left_s = format_bound_latex(left)
     right_s = format_bound_latex(right)
-    density_latex = build_density_latex(mu, sigma)
+    density_latex = build_density_latex(mu, sigma, variable_symbol)
 
-    latex_density = rf"g(x):={density_latex}"
+    latex_density = rf"g({variable_symbol}):={density_latex}"
     latex_probability = (
-        rf"P\left({left_s} < x < {right_s}\right)="
-        rf"\int_{{{left_s}}}^{{{right_s}}}g(x)\,dx={area:.6f}"
+        rf"P\left({left_s} < {variable_symbol} < {right_s}\right)="
+        rf"\int_{{{left_s}}}^{{{right_s}}}g({variable_symbol})\,d{variable_symbol}={area:.6f}"
     )
     return latex_density, latex_probability
 
@@ -190,9 +198,12 @@ def index():
                 raise ValueError("La desviación estándar debe ser mayor que 0.")
 
             left, right = sorted((desde, hasta))
+            variable_symbol = choose_variable_symbol(mu, sigma)
             area = normal_cdf(right, mu, sigma) - normal_cdf(left, mu, sigma)
-            image_b64 = draw_curve(mu, sigma, left, right)
-            latex_density, latex_probability = build_latex(mu, sigma, left, right, area)
+            image_b64 = draw_curve(mu, sigma, left, right, variable_symbol)
+            latex_density, latex_probability = build_latex(
+                mu, sigma, left, right, area, variable_symbol
+            )
 
             result = {
                 "area": f"{area:.6f}",
