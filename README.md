@@ -1,12 +1,12 @@
-# App Python para Vercel: area bajo la curva normal
+# App Python para Vercel: área bajo la curva normal
 
-Aplicacion web en Flask que:
-- recibe `mu` (media) y `sigma` (desviacion estandar) en cajas de texto (por omision `0` y `1`);
-- recibe limites `DESDE` y `HASTA`;
-- calcula el area bajo la curva normal en ese intervalo;
-- dibuja la distribucion con el area sombreada;
-- renderiza la expresion en LaTeX.
-- permite limites infinitos con sintaxis tipo SymPy: `oo` y `-oo`.
+Aplicación web en Flask que:
+- recibe `mu` (media) y `sigma` (desviación estándar) en cajas de texto (por omisión `0` y `1`);
+- recibe límites `DESDE` y `HASTA`;
+- calcula el área bajo la curva normal en ese intervalo;
+- dibuja la distribución con el área sombreada;
+- renderiza la expresión en LaTeX;
+- permite límites infinitos con sintaxis tipo SymPy: `oo` y `-oo`.
 
 ## Ejecutar en local
 
@@ -40,7 +40,7 @@ python3 api/index.py
    ```bash
    vercel
    ```
-3. Para produccion:
+3. Para producción:
    ```bash
    vercel --prod
    ```

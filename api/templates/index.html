@@ -323,29 +323,29 @@
     <main>
       <section class="card no-print">
         <h1>Área bajo la curva normal</h1>
-        <p class="note">Captura la media, la desviacion estandar y el intervalo.</p>
+        <p class="note">Captura la media, la desviación estándar y el intervalo.</p>
         <p class="note">
-          Para limites infinitos usa <code>oo</code> o <code>-oo</code>.
+          Para límites infinitos usa <code>oo</code> o <code>-oo</code>.
         </p>
 
         <form method="post">
           <div class="form-groups">
             <fieldset>
-              <legend>Parametros</legend>
+              <legend>Parámetros</legend>
               <div class="field-grid">
                 <div>
                   <label for="mu">Media <span class="math-symbol">μ</span></label>
                   <input id="mu" name="mu" type="text" value="{{ form_values.mu }}" />
                 </div>
                 <div>
-                  <label for="sigma">Desviacion estandar <span class="math-symbol">σ</span></label>
+                  <label for="sigma">Desviación estándar <span class="math-symbol">σ</span></label>
                   <input id="sigma" name="sigma" type="text" value="{{ form_values.sigma }}" />
                 </div>
               </div>
             </fieldset>
 
             <fieldset>
-              <legend>Limites</legend>
+              <legend>Límites</legend>
               <div class="field-grid">
                 <div>
                   <label for="desde">Desde</label>
@@ -376,7 +376,7 @@
           <img
             class="plot"
             src="data:image/png;base64,{{ result.image_b64 }}"
-            alt="Grafica de distribucion normal con area sombreada"
+            alt="Gráfica de distribución normal con área sombreada"
           />
         </section>
         <div class="report-actions no-print" id="report-actions">
