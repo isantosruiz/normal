@@ -57,16 +57,17 @@ def parse_finite_value(raw_value: str, field_name: str) -> float:
 
 
 def parse_bound(raw_value: str) -> float:
-    token = raw_value.strip().lower().replace(" ", "")
+    normalized_raw_value = raw_value.strip().replace("−", "-")
+    token = normalized_raw_value.lower().replace(" ", "")
     if token in POS_INF_TOKENS:
         return math.inf
     if token in NEG_INF_TOKENS:
         return -math.inf
 
     try:
-        return float(raw_value)
+        return float(normalized_raw_value)
     except ValueError as exc:
-        raise ValueError("Ingresa límites válidos. Usa números o oo/-oo.") from exc
+        raise ValueError("Ingresa límites válidos. Usa números o oo/-oo/−oo.") from exc
 
 
 def format_bound_latex(value: float) -> str:
